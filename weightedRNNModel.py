@@ -43,9 +43,7 @@ class WRNNModel:
         for i in range(1, len(inputs_list)):
             output += inputs_list[i] * weight_array[i]
         return output
-    
-    def AttentionLayer(self,inputlayer):
-        
+            
     
     def buildnet(self,trainX_dict, onehottrain_y):
         #prepare the embedding layer
@@ -74,11 +72,9 @@ class WRNNModel:
         
         model.add(Flatten())
         
-        model.add(LSTM(128, input_shape=(model.output_shape[0], model.output_shape[1]),return_sequences=True))
-        model.add(Dropout(0.2))
-
-        model.add(LSTM(128,return_sequences=False))
-        model.add(Dropout(0.2))
+        
+        #Lstm import hyperparameters 
+        model.add(LSTM(units=279, input_shape=(model.output_shape[0], model.output_shape[1]),dropout=0.2,return_sequences=True))
 
         model.add(Dense(output_dim=570, input_dim=620,init='random_uniform',activation='tanh',use_bias=True,
                         kernel_regularizer=regularizers.l2(0.014),
