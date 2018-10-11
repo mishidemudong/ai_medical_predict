@@ -12,7 +12,8 @@ from hyperparams import Hyperparams as hp
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras.optimizers import Adagrad
-
+import weightedRNNModel
+import auc_ks_eval
 
 def train(model,train_x, train_y):
 
@@ -66,30 +67,18 @@ if __name__ == '__main__':
     
     onehottrain_y = tf.one_hot(np.asarray(train_y), 2).eval()
     
-    mlp = model.ANNET_newModel()
-    if trainOrpredict == "train":
-#        mlp = model.CNN2Model()
+    wrnnmodel = weightedRNNModel.WRNNModel()
         
-        print ("onehottrain_y",onehottrain_y[400:405])
+    print ("onehottrain_y",onehottrain_y[400:405])
+    
+    predict = wrnnmodel.predict_classes(test_x)
+    print (test_y[:10].T)
+    print (predict[:10])
+    
+    wrnnmodel.save(modelfile)
+    
+    auc_ks_eval.model_evaluation(wrnnmodel,train_x, train_y, test_x, test_y)
+    
+    sess.close()    
         
-        mlpmodel = mlp.bp_net(train_x,onehottrain_y)#train_y,onehottrain_y  np.asarray(
-        
-        predict = mlpmodel.predict_classes(test_x)
-        print (test_y[:10].T)
-        print (predict[:10])
-        
-        mlpmodel.save(modelfile)
 
-        mlpmodel = load_model(modelfile)
-        
-        model_evaluation(mlpmodel,train_x, train_y, test_x, test_y)
-        
-        sess.close()    
-        
-    elif trainOrpredict == "predict":
-        #predict
-        mlpmodel = load_model(modelfile)
-        
-        model_evaluation(mlpmodel,train_x, train_y, test_x, test_y)
-        
-        sess.close()

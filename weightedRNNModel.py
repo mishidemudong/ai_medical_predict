@@ -5,20 +5,12 @@ Created on Tue Oct  9 21:57:50 2018
 @author: ldk
 """
 
-
-import tensorflow as tf
-import numpy as np
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Activation
 from tensorflow.keras.layers import Dense ,GaussianDropout,Embedding,Flatten,LSTM
 from tensorflow.keras.layers import Dropout,BatchNormalization
 from tensorflow.keras.constraints import MaxNorm as maxnorm  
-from tensorflow.keras.optimizers import SGD, RMSprop, Adagrad, Adadelta, Adam, Adamax, Nadam
 from tensorflow.keras import regularizers
-
-from params import Hyperparas
-
 
 class WRNNModel:
     def Average(self,trainX_dict,same_dict,weight_array):
@@ -46,7 +38,6 @@ class WRNNModel:
         #prepare the embedding layer
         #for same type medical events 
 
-        
         self.weight_array = [0.35,0.65] 
         S_emb = self.Average(trainX_dict,self.weight_array)
         
