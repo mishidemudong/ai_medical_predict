@@ -6,19 +6,16 @@ Created on Tue Oct  9 21:57:50 2018
 """
 
 
-#import tensorflow as tf
-#import numpy as np
-from keras import backend as K
-from keras.models import Sequential
-from keras.layers.core import Activation
-from keras.layers.advanced_activations import ThresholdedReLU
-from keras.layers import Dense ,GaussianDropout,Embedding,Flatten,LSTM
-from keras.layers import Dropout,BatchNormalization
-from keras.constraints import maxnorm
-from keras.optimizers import SGD, RMSprop, Adagrad, Adadelta, Adam, Adamax, Nadam
-from keras import regularizers
-from keras.layers.advanced_activations import LeakyReLU
-from keras.objectives import categorical_crossentropy
+import tensorflow as tf
+import numpy as np
+from tensorflow.keras import backend as K
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Activation
+from tensorflow.keras.layers import Dense ,GaussianDropout,Embedding,Flatten,LSTM
+from tensorflow.keras.layers import Dropout,BatchNormalization
+from tensorflow.keras.constraints import MaxNorm as maxnorm  
+from tensorflow.keras.optimizers import SGD, RMSprop, Adagrad, Adadelta, Adam, Adamax, Nadam
+from tensorflow.keras import regularizers
 
 from params import Hyperparas
 
@@ -88,39 +85,9 @@ class WRNNModel:
                         activation='sigmoid', 
                         W_constraint=maxnorm(1)))
         
-        #binary task
-        opt1 = Adagrad(lr=0.05, decay=1e-6)
-        opt2 = Adagrad(lr=0.005, decay=1e-6)
-        opt3 = Adagrad(lr=0.001, decay=1e-6)
-        
-        #multilable tasks
-        opt3 = Adam(lr=0.001, decay=1e-6)
-        #iteration times
-        epoch_1 = 120
-        epoch_2 = 60
-        eopch_3 = 18
-        
-        k = 1
-        batch_size_3 = 1342*k
-        batch_size_2 = 256*k
-        batch_size_1 = 128*k
-
-        print ("step 1...."  )
-#        model.summary()
-        model.compile(loss='binary_crossentropy', optimizer=opt1 ,metrics=['binary_accuracy'])  ##auc,,loss:categorical_crossentropy  sparse_categorical_crossentropy,
-
-        model.fit(train_x, onehottrain_y, epochs=epoch_1, batch_size=batch_size_1,shuffle = True,verbose=2) #4训练模型
-            
-        print ("step 2....")
-        model.compile(loss='binary_crossentropy', optimizer=opt2 ,metrics=['binary_accuracy']) #binary_accuracy
-        model.fit(train_x, onehottrain_y, epochs=epoch_2, batch_size=batch_size_2,shuffle = True,verbose=2) #4训练模型
-
-        print ("step 3....")
-
-        model.compile(loss='binary_crossentropy', optimizer=opt3 ,metrics=['binary_accuracy'])
-        model.fit(train_x, onehottrain_y, epochs=eopch_3, batch_size=batch_size_3,shuffle = True,verbose=2) #4训练模型
-        
         return model
+
+
 
     
 
