@@ -14,6 +14,7 @@ import numpy as np
 from tensorflow.keras.optimizers import Adagrad
 import weightedRNNModel
 import auc_ks_eval
+import baseFileRead
 
 def train(model,train_x, train_y):
 
@@ -52,13 +53,16 @@ def train(model,train_x, train_y):
     
     return model
  
+    
+def tf_train(model,train_x, train_y):
+    
 
          
 if __name__ == '__main__':
     
     
     #prepare train data
-    train_x, train_y, test_x, test_y = readfilefunc.readdata(label_file,shuffle,scalarOr,rate)  
+    train_x, train_y, test_x, test_y = baseFileRead.readdata(label_file,shuffle,scalarOr,rate)  
     print (train_x.shape[0])
     
 #    config = tf.ConfigProto()

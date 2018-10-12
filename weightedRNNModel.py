@@ -47,11 +47,12 @@ class WRNNModel:
         #concatenate different types
         MedicalFea_emb = K.concatenate([S_emb , O1_emb] , axis=1)
         
-        #delta time feature
+        #delta time feature , and the hyper weights Deltatime factor
         Delta_time_emb = Embedding(128, 20,input_length=trainX_dict['delta'].shape[1],embeddings_regularizer=regularizers.l1(0.00045))
+        Dt_factor = 0.41
         
         #concatenate delta fea
-        RNN_emb = K.concatenate([MedicalFea_emb , Delta_time_emb] , axis=1)
+        RNN_emb = K.concatenate([MedicalFea_emb , Dt_factor*Delta_time_emb] , axis=1)
         
         #build model
         model = Sequential()

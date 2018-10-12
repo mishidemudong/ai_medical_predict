@@ -83,17 +83,17 @@ def plot_results(predicted_data, true_data,predicted_next):
     plt.legend() 
     plt.show() 
     #plt.savefig(filename+'.png') 
- def predict_next(model,scaler,dataset_pre,look_back,next_num): 
-     dataset_pre = scaler.transform(dataset[len(dataset)-look_back:len(dataset), 0]) 
-     next_predicted_list=[] 
-     for i in range(next_num): 
-         dataXNext = dataset_pre[len(dataset_pre)-look_back:len(dataset_pre)] 
-         dataPreNext = dataXNext.reshape(1,look_back,1) 
-         next_predicted = model.predict(dataPreNext) 
-         next_predicted_array = np.array(next_predicted[0]) 
-         next_predicted_list.append(next_predicted[0][0]) 
-         dataset_pre = np.concatenate((dataset_pre,next_predicted_array)) 
-         print("未来",i,"天的降水量预测值为：",next_predicted[0][0]) 
+def predict_next(model,scaler,dataset_pre,look_back,next_num): 
+    dataset_pre = scaler.transform(dataset[len(dataset)-look_back:len(dataset), 0]) 
+    next_predicted_list=[] 
+    for i in range(next_num): 
+        dataXNext = dataset_pre[len(dataset_pre)-look_back:len(dataset_pre)] 
+        dataPreNext = dataXNext.reshape(1,look_back,1) 
+        next_predicted = model.predict(dataPreNext) 
+        next_predicted_array = np.array(next_predicted[0]) 
+        next_predicted_list.append(next_predicted[0][0]) 
+        dataset_pre = np.concatenate((dataset_pre,next_predicted_array)) 
+    print("未来",i,"天的降水量预测值为：",next_predicted[0][0]) 
     return scaler.inverse_transform(next_predicted_list) 
      
 if __name__=='__main__': 

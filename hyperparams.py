@@ -19,3 +19,6 @@ class Hyperparas:
     #delta feature params
     Delta_emb_size = 20
     Delta_factor = 0.41
+    
+    
+    Hidden_dropout = 

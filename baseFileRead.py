@@ -4,13 +4,13 @@ Created on Thu Oct 11 23:29:30 2018
 
 @author: ldk
 """
-    from sklearn.preprocessing import StandardScaler,MinMaxScaler,normalize
-    from sklearn.model_selection import train_test_split
-    from sklearn.svm import LinearSVC
-    
-    from sklearn.feature_selection import SelectKBest,chi2,f_classif
-    from sklearn.feature_selection import SelectFromModel
-
+from sklearn.preprocessing import StandardScaler,MinMaxScaler,normalize
+from sklearn.model_selection import train_test_split
+from sklearn.svm import LinearSVC
+from sklearn.feature_selection import SelectKBest,chi2,f_classif
+from sklearn.feature_selection import SelectFromModel
+import pandas as pd
+from sklearn.utils import shuffle 
 
 def sampleBytarget(data,target,rate,replaceOr):
     print ("ori data shape",data.shape)
@@ -49,36 +49,22 @@ def drop_func(oriDF):
                                                              'cc_open_time',	'cc_first_use_date','cc_last_use_date',
                                                              'dc_open_time',	'dc_first_use_date','dc_last_use_date','prod_no','ID'
                                                              ]]
-    oriDF = oriDF[predictors]
+    return oriDF[predictors]
     
-    return oriDF
-
 def readdata(data_file,shuffleor,scalarOr,rate):
-    import pandas as pd
 
-    from sklearn.utils import shuffle 
-
-    from sklearn.cross_validation import train_test_split
-
-    
     data = pd.read_csv(data_file)#.fillna(0)#.replace('str',{-999:0}).replace('str',{'-999':0})     
     
     data = drop_func(data)
-    
-    
+        
     if shuffleor:
         data = shuffle(data)
-    # drop na
     
 #    data = sampleBytarget(data,0,rate,False)
 
     print ("data shape",data.shape)
     print ("data columns",data.columns)
 #    X = data.drop('phone_num',axis = 1)
-
-#    X = X.drop('delta_regi_date',axis = 1)
-#    X = X.drop('regi_latestdate',axis = 1) ##ori 759 samples
-
 
 #    X = fature_select(X, y,700)
     Train,Test= train_test_split(data, test_size=0.3, random_state=4)    
