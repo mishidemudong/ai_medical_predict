@@ -5,9 +5,10 @@ Created on Wed Oct 10 14:43:12 2018
 
 @author: ldk
 """
-import keras.backend as K
-from keras import initializers
-from keras.layers import *
+import tensorflow.keras.backend as K
+from tensorflow.keras import initializers
+#from tensorflow.keras.layers import *
+from tensorflow.python.keras.engine import Layer
 
 class AttentionLayer(Layer):
     def __init__(self, attention_dim):
@@ -40,6 +41,7 @@ class AttentionLayer(Layer):
         if mask is not None:
             # Cast the mask to floatX to avoid float64 upcasting in theano
             ait *= K.cast(mask, K.floatx())
+            
         ait /= K.cast(K.sum(ait, axis=1, keepdims=True) + K.epsilon(), K.floatx())
         ait = K.expand_dims(ait)
         weighted_input = x * ait

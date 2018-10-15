@@ -4,13 +4,16 @@ Created on Tue Oct  9 21:57:50 2018
 
 @author: ldk
 """
-
+import tensorflow as tf
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense ,GaussianDropout,Embedding,Flatten,LSTM
 from tensorflow.keras.layers import Dropout,BatchNormalization
 from tensorflow.keras.constraints import MaxNorm as maxnorm  
 from tensorflow.keras import regularizers
+
+import Attention_keras
+
 
 class WRNNModel:
     def Average(self,trainX_dict,same_dict,weight_array):
@@ -33,6 +36,7 @@ class WRNNModel:
             output += inputs_list[i] * weight_array[i]
         return output
             
+    
     
     def buildnet(self,trainX_dict, onehottrain_y):
         #prepare the embedding layer
@@ -61,11 +65,14 @@ class WRNNModel:
         
         model.add(Flatten())
         
+        ##add attention layer implement with keras
+        model.add(Attention_keras())
         
         #Lstm import hyperparameters 
-        model.add(LSTM(units=279, input_shape=(model.output_shape[0], model.output_shape[1]),dropout=0.2,return_sequences=True))
+        lstm_hid_size = 279
+        model.add(LSTM(units=lstm_hid_size, input_shape=(model.output_shape[0], model.output_shape[1]),dropout=0.2,return_sequences=True))
 
-        model.add(Dense(output_dim=570, input_dim=620,init='random_uniform',activation='tanh',use_bias=True,
+        model.add(Dense(output_dim=lstm_hid_size, input_dim=lstm_hid_size,init='random_uniform',activation='tanh',use_bias=True,
                         kernel_regularizer=regularizers.l2(0.014),
 #                        bias_regularizer=regularizers.l2(0.0003),
 #                        activity_regularizer=regularizers.l2(0.003),
