@@ -43,6 +43,7 @@ def create_train_test_data(dataset,look_back ):
     trainX = trainX.reshape (trainX.shape[0],look_back ,1) 
     testX = testX.reshape(testX.shape[0], look_back , 1) 
     return scaler,trainX,trainY,testX,testY 
+
 def build_model(layers,seq_len): 
     #layers [1,50,100,1] 
     model = Sequential() 

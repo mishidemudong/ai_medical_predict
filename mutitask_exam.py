@@ -119,7 +119,6 @@ def eucl_dist(inputs):
     x, y = inputs
     return (x - y)**2
 
-
 early_stopping = EarlyStopping(monitor='val_loss', patience=3)
 auto_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=3, verbose=0, mode='auto', epsilon=0.0001, cooldown=0, min_lr=0)
 save_model = ModelCheckpoint('xception{epoch:02d}-{val_ctg_out_1_acc:.2f}.h5', period=2)
