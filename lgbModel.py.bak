@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Oct 16 14:01:01 2018
+
+@author: ldk
+"""
+
+def lgbmodelfit(alg, dtrain, dtest, predictors, pkl_file,useTrainCV=False, cv_folds=5, early_stopping_rounds=50):
+
+    if useTrainCV:
+        lgb_param = alg.get_params()
+        lgbtrain = lgb.Dataset(dtrain[predictors].values, label=dtrain[target].values)
+        lgbtest = lgb.Dataset(dtest[predictors].values)
+        cvresult = lgb.cv(lgb_param, lgbtrain, num_boost_round=alg.get_params()['n_estimators'], nfold=cv_folds)
+        alg.set_params(n_estimators=cvresult.shape[0])
+    
+    #建模
+    alg.fit(dtrain[predictors], dtrain['target'],eval_metric='auc')
+    
+    fea_imp = pd.DataFrame(alg.feature_importances_, columns= ['feature_importance'])
+    fea_imp['feature'] = predictors
+    
+    #对训练集预测
+    dtrain_predictions = alg.predict(dtrain[predictors])
+    dtrain_predprob = alg.predict_proba(dtrain[predictors])[:,1]
+    dtest_predictions = alg.predict(dtest[predictors])
+    dtest_predprob = alg.predict_proba(dtest[predictors])[:,1]
+    
+    train_f1_score = f1_score(dtrain['target'], dtrain_predictions)
+    test_f1_score = f1_score(dtest['target'], dtest_predictions)
+
+    #输出模型的一些结果
+    print "准确率 : %.4g" % accuracy_score(dtrain['target'].values, dtrain_predictions)
+    print "AUC 得分 (训练集): %f" % roc_auc_score(dtrain['target'], dtrain_predprob)
+    print "f1_score (训练集): %f" % train_f1_score
+    print confusion_matrix(dtrain['target'], dtrain_predictions)
+            
+    #输出模型的一些结果
+    print "准确率 : %.4g" % accuracy_score(dtest['target'].values, dtest_predictions)
+    print "AUC 得分 (测试集): %f" % roc_auc_score(dtest['target'], dtest_predprob)
+    print "f1_score (测试集): %f" % test_f1_score
+    
+    print confusion_matrix(dtest['target'], dtest_predictions)
+    if test_f1_score>0.0:
+        print 'save_model %s'%pkl_file
+        joblib.dump(alg, pkl_file)
+    #print list(alg.booster().feature_importance)
+    #feat_imp = pd.Series(alg.booster().feature_importance).sort_values(ascending=False)
+    #feat_imp.plot(kind='bar', title='Feature Importances')
+    #plt.ylabel('Feature Importance Score')
+    return fea_imp
+
+
+
+gbm = lgb.LGBMClassifier(
+    objective='binary',
+    max_depth=3,
+    num_leaves=50,
+    silent=False,
+    learning_rate=0.1,
+    n_estimators=100,
+    subsample =0.8,
+    colsample_bytree=0.8,
+    reg_alpha = 0.00001,# L1 
+    reg_lambda = 0.00001 #L2
+)
+
+oridata = left_joinFunc(oridata,feaDF,'CUST_NO').fillna(-999).drop_duplicates("CUST_NO")
+oridata.to_csv("./data/train/rxy_cheated_allfea.csv", index = False, index_label = None,mode = 'wb+')
+
+
+savedmodel_dir = './evaluation/model/lightgb_rxycheated_0213.pkl'
+resultfile = './result/rxy_2_13.csv'
+trainOrpredict = "train" 
+test4eval = "./data/train/TestData2.csv"
+
+testfile = "./data/feature/test/feature_allDF_add2baseinfo.csv"
+
+
+if trainOrpredict == "train":
+    oriTraindata = feaSelect.trainfeatureselect(oridata)
+    Train_data,Test_data = train_test_split(oriTraindata, test_size = 0.3,random_state=7)
+    
+    
+    predictors = [x for x in Train_data.columns if x not in [target, IDcol, type1]]
+    
+    feature_importance = lgbmodelfit(gbm,Train_data,Test_data,predictors,savedmodel_dir)
+    print feature_importance    
+    
+    Test_data.to_csv(test4eval,index = False, index_label = None,mode = 'wb+')
+
+elif trainOrpredict == "predict":
+    predictDF = pd.read_csv(testfile)
+    fiteddata = predictDF.drop("CUST_NO",axis=1)
+    labledDF = pd.DataFrame(predictDF["CUST_NO"])
+    
+    slfeaLableDF = feaSelect.featureselect(fiteddata)
+    
+    clf = joblib.load(savedmodel_dir)
+    predict_label = clf.predict(slfeaLableDF)
+    print predict_label[:5]
+
+    predict_score = clf.predict_proba(slfeaLableDF)
+    print predict_score[:5,0]    
+    
+    labledDF['label'] = predict_label
+    labledDF['score'] = predict_score[:,0]
+    
+    labledDF.to_csv(resultfile,index = False, index_label = None,mode = 'wb+')

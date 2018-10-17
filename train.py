@@ -17,8 +17,6 @@ import baseFileRead
 
 def train(model,train_x, train_y):
 
-
-
     #iteration times
     epoch_1 = 120
     epoch_2 = 60
@@ -31,8 +29,7 @@ def train(model,train_x, train_y):
 
 #    print ("step 1...."  )
 #        model.summary()
-    model.fit(train_x, train_y, epochs=epoch_1, batch_size=batch_size_1,shuffle = True,verbose=2) #4训练模型
-        
+    model.fit(train_x, train_y, epochs=epoch_1, batch_size=batch_size_1,shuffle = True,verbose=2) #4训练模型        
 #    print ("step 2....")
 #    model.compile(loss='binary_crossentropy', optimizer=opt2 ,metrics=['binary_accuracy']) #binary_accuracy
 #    model.fit(train_x, train_y, epochs=epoch_2, batch_size=batch_size_2,shuffle = True,verbose=2) #4训练模型
@@ -46,14 +43,16 @@ def train(model,train_x, train_y):
  
     
 def tf_train(model,train_x, train_y):
-    
+    return 0
 
          
 if __name__ == '__main__':
     
-    
+    ehr_file = "./"
+    shuffle = True
+    modelfile = './model/wrnnmodel.h5'
     #prepare train data
-    train_x, train_y, test_x, test_y = baseFileRead.readdata(label_file,shuffle,scalarOr,rate)  
+    train_x, train_y, test_x, test_y = baseFileRead.readdata(ehr_file,shuffle)  
     print (train_x.shape[0])
     
 #    config = tf.ConfigProto()
